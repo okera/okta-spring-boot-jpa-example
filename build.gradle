@@ -40,7 +40,7 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
 	
 	// PostgresSQL-specific connector for JPA
-	implementation('postgresql:postgresql')
+	implementation('org.postgresql:postgresql:9.4-1206-jdbc42')
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('org.springframework.security:spring-security-test')
