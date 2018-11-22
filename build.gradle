@@ -48,7 +48,15 @@ dependencies {
 	// Lombok autogenerates things like getters and setters
 	compileOnly('org.projectlombok:lombok')
 
+	compile ('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.0.1.RELEASE')
+	compile ('com.okta.spring:okta-spring-boot-starter:0.6.1')
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('org.springframework.security:spring-security-test')
 	
+}
+
+configurations.all {
+	exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	exclude group: 'org.springframework.boot', module: 'logback-classic'
 }
