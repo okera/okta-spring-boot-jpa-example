@@ -102,6 +102,17 @@ curl localhost:8080/kayaks -u springbootjpa_user:password | jq '._embedded.kayak
 
 It is expected that the root user see all data and the springbootjpa_user only see loaners, as per the created dynamic row filter.
 
+### Configuration
+
+Configuration to the Okera service is done in the application yaml.
+
+```yaml
+okera:
+  planner_host: localhost
+  planner_port: 12050
+  default_db: springbootjpa
+```
+
 ## Links
 
 This example uses [Okta's Spring Boot Starter](https://github.com/okta/okta-spring-boot).

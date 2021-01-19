@@ -16,6 +16,7 @@ import org.hibernate.engine.jdbc.internal.FormatStyle;
 import org.hibernate.engine.jdbc.internal.Formatter;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,6 +46,9 @@ import org.springframework.util.ReflectionUtils;
 @Component
 public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
 
+  @Autowired
+  private OkeraConfig okeraConfig;
+
   @Override
   public Object postProcessBeforeInitialization(
       Object bean, String beanName) throws BeansException {
@@ -55,10 +59,11 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
   public Object postProcessAfterInitialization(
       Object bean, String beanName) throws BeansException {
     if (bean instanceof DataSource) {
+
       // Only proxy creation of DataSource objects
       ProxyFactory factory = new ProxyFactory(bean);
       factory.setProxyTargetClass(true);
-      factory.addAdvice(new ProxyDataSourceInterceptor((DataSource) bean));
+      factory.addAdvice(new ProxyDataSourceInterceptor((DataSource) bean, okeraConfig));
       return factory.getProxy();
     }
     return bean;
@@ -67,10 +72,10 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
   private static class ProxyDataSourceInterceptor implements MethodInterceptor {
     private final DataSource dataSource;
 
-    public ProxyDataSourceInterceptor(final DataSource dataSource) {
+    public ProxyDataSourceInterceptor(final DataSource dataSource, OkeraConfig configs) {
       super();
       //this.dataSource = createLoggingDatasource(dataSource, false);
-      this.dataSource = createQueryRewriter(dataSource);
+      this.dataSource = createQueryRewriter(dataSource, configs);
     }
 
     @Override
@@ -127,14 +132,14 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
     return builder.build();
   }
 
-  private static DataSource createQueryRewriter(final DataSource dataSource) {
+  private static DataSource createQueryRewriter(
+      final DataSource dataSource, OkeraConfig configs) {
     OkeraQueryTransformer transformer = new OkeraQueryTransformer();
-    // Hard coded as an example, these values can be configured any way, including
-    // from the environment variables.
-    transformer.setHost("localhost");
-    transformer.setPort(12050);
-    transformer.setSystemUser("root");
-    transformer.setDefaultDb("springbootjpa");
+    transformer.setHost(configs.getPlannerHost());
+    transformer.setPort(configs.getPlannerPort());
+    transformer.setSystemUser(configs.getSystemUser());
+    transformer.setToken(configs.getSystemToken());
+    transformer.setDefaultDb(configs.getDefaultDb());
 
     transformer.setUserProvider(() -> {
       // User to run the request as. This is the user logged into the application.
