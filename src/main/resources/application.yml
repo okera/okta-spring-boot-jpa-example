@@ -5,6 +5,6 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     url: "jdbc:postgresql://localhost:5432/springbootjpa"
-    username: oktatutorial
-    password: < your password >
+    username: jpatutorial
+    password: tutorial
 
