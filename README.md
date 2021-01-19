@@ -11,8 +11,8 @@ Please read [Build a Basic App with Spring Boot and JPA using PostgreSQL](https:
 > [Okta](https://developer.okta.com/) has Authentication and User Management APIs that reduce development time with instant-on, scalable user infrastructure. Okta's intuitive API and expert support make it easy for developers to authenticate, manage, and secure users and roles in any application.
 
 * [Getting Started](#getting-started)
+* [Okera Integration](#okera-integration)
 * [Links](#links)
-* [Help](#help)
 * [License](#license)
 
 ## Getting Started
@@ -36,9 +36,57 @@ This will likely fail. You need to configure a PostgreSQL database with the foll
     username: jpatutorial
     password: abcd1234
 
+## Okera Integration
+
+This repository also demonstrates how to use Okera's spring data connector to provide dynamic access control. With this integration, Okera's libraries will wrap the Spring Data JPA Data Source and provide dynamic query rewrite. The application query, before being sent to the original Data Source, will be authorized by the Okera server which returns an altered SQL statement. 
+
+For example, if the original application query was:
+
+```sql
+SELECT name FROM customers
+```
+
+Based on the access policies, the server could return
+```sql
+SELECT name FROM customers WHERE country = 'US'
+```
+
+In this repository, all this functionality is encapsulated in `DatasourceProxyBeanPostProcessor.java`. The functionality is enabled by simply including the class in the application.
+
+The query transformation mechanism uses an open source library for integrating with Spring Data, which provides multiple ways to integrate with existing applications.
+
+### Setup
+
+There are multiple ways to have Okera understand the schema of the application queries. In production, this is typically done with Okera's JDBC registration features. For this example, the kayak table can be created explicitly.
+
+In Okera, run:
+
+```sql
+CREATE DATABASE springbootjpa;
+
+CREATE TABLE springbootjpa.kayak(
+  id INT,
+  name STRING,
+  owner STRING,
+  value DECIMAL(9,2),
+  make_model STRING
+);
+
+CREATE ROLE springbootjpa_user;
+GRANT ROLE springbootjpa_user TO GROUPS springbootjpa_user;
+GRANT SHOW ON DATABASE springbootjpa TO ROLE springbootjpa_user;
+
+-- Create a policy that restricts one user from only being able to see 'loaner' kayaks.
+GRANT SELECT ON TABLE springbootjpa.kayak
+WHERE name = 'loaner'
+TO ROLE springbootjpa_user;
+```
+
 ## Links
 
 This example uses [Okta's Spring Boot Starter](https://github.com/okta/okta-spring-boot).
+
+This is the spring data [framework](http://ttddyy.github.io/datasource-proxy/docs/current/user-guide/).
 
 ## License
 

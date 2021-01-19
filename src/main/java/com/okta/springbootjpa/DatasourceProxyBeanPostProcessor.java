@@ -1,5 +1,7 @@
 package com.okta.springbootjpa;
 
+import com.okera.springdata.OkeraQueryTransformer;
+
 import java.lang.reflect.Method;
 import javax.sql.DataSource;
 
@@ -65,7 +67,8 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
 
     public ProxyDataSourceInterceptor(final DataSource dataSource) {
       super();
-      this.dataSource = createLoggingDatasource(dataSource, false);
+      //this.dataSource = createLoggingDatasource(dataSource, false);
+      this.dataSource = createQueryRewriter(dataSource);
     }
 
     @Override
@@ -102,8 +105,7 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
     SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
     listener.setQueryLogEntryCreator(creator);
 
-    ProxyDataSourceBuilder builder = ProxyDataSourceBuilder
-      .create(dataSource)
+    ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource)
       .name("okera-datasource-proxy")
       .listener(listener)
       .proxyResultSet();
@@ -113,12 +115,33 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
           // print out JDBC API calls to console
           Method method = executionContext.getMethod();
           Class<?> targetClass = executionContext.getTarget().getClass();
-          System.out.println("JDBC: " + targetClass.getSimpleName() + "#" + method.getName());
+          System.out.println(
+              "JDBC: " + targetClass.getSimpleName() + "#" + method.getName());
           });
     }
     builder = builder.afterQuery((execInfo, queryInfoList) -> {
         System.out.println("Query took " + execInfo.getElapsedTime() + "msec");
         });
     return builder.build();
+  }
+
+  private static DataSource createQueryRewriter(final DataSource dataSource) {
+    OkeraQueryTransformer transformer = new OkeraQueryTransformer();
+    // Hard coded as an example, these values can be configured any way, including
+    // from the environment variables.
+    transformer.setHost("localhost");
+    transformer.setPort(12050);
+    transformer.setSystemUser("root");
+    transformer.setDefaultDb("springbootjpa");
+
+    // User to run the request as. This is the user logged into the application.
+    //transformer.setUser("root");
+    transformer.setUser("springbootjpa_user");
+
+    return ProxyDataSourceBuilder.create(dataSource)
+      .name("okera-datasource-proxy")
+      .proxyResultSet()
+      .queryTransformer(transformer)
+      .build();
   }
 }
