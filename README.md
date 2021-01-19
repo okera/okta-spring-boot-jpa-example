@@ -82,6 +82,26 @@ WHERE name = 'loaner'
 TO ROLE springbootjpa_user;
 ```
 
+### User authentication
+
+The example application has basic authentication enabled, for the `root` and `springbootjpa_user` test users. Both users use `password` as the password. 
+
+After running `./gradlew bootRun`, you can view the data via curl.
+
+As the admin root user:
+
+```bash
+curl localhost:8080/kayaks -u root:password | jq '._embedded.kayaks | .[] | "Owner=\(.owner) name=\(.name) model=\(.makeModel) value=\(.value)"'
+```
+
+As the springbootjpa_user:
+
+```bash
+curl localhost:8080/kayaks -u springbootjpa_user:password | jq '._embedded.kayaks | .[] | "Owner=\(.owner) name=\(.name) model=\(.makeModel) value=\(.value)"'
+```
+
+It is expected that the root user see all data and the springbootjpa_user only see loaners, as per the created dynamic row filter.
+
 ## Links
 
 This example uses [Okta's Spring Boot Starter](https://github.com/okta/okta-spring-boot).

@@ -35,7 +35,6 @@ repositories {
 
 
 dependencies {
-	
 	// Spring Boot's web application support
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	
@@ -44,6 +43,10 @@ dependencies {
 
 	// Spring Data REST support
 	implementation('org.springframework.boot:spring-boot-starter-data-rest')
+
+    // Spring Security
+	implementation('org.springframework.security:spring-security-config')
+	implementation('org.springframework.security:spring-security-web')
 
 	// PostgresSQL-specific connector for JPA
 	implementation('org.postgresql:postgresql:9.4-1206-jdbc42')

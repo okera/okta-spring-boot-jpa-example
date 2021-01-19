@@ -17,6 +17,8 @@ import org.hibernate.engine.jdbc.internal.Formatter;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
@@ -134,9 +136,12 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
     transformer.setSystemUser("root");
     transformer.setDefaultDb("springbootjpa");
 
-    // User to run the request as. This is the user logged into the application.
-    //transformer.setUser("root");
-    transformer.setUser("springbootjpa_user");
+    transformer.setUserProvider(() -> {
+      // User to run the request as. This is the user logged into the application.
+      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+      if (auth == null) return null;
+      return auth.getName();
+    });
 
     return ProxyDataSourceBuilder.create(dataSource)
       .name("okera-datasource-proxy")
