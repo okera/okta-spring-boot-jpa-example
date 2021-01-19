@@ -45,6 +45,9 @@ dependencies {
 	// PostgresSQL-specific connector for JPA
 	implementation('org.postgresql:postgresql:9.4-1206-jdbc42')
 
+    // datasource-proxy
+    implementation('net.ttddyy:datasource-proxy:1.7')
+
 	// Lombok autogenerates things like getters and setters
 	compileOnly('org.projectlombok:lombok')
 

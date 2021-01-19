@@ -8,13 +8,14 @@ import org.springframework.context.annotation.Bean;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.stream.Stream;
+import java.lang.reflect.Method;
 
 @SpringBootApplication
 public class SpringBootJpaApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SpringBootJpaApplication.class, args);
-    }
+  public static void main(String[] args) {
+      SpringApplication.run(SpringBootJpaApplication.class, args);
+  }
 
   @Bean
   ApplicationRunner init(KayakRepository repository) {
