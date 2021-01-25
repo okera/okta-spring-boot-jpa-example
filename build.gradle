@@ -51,11 +51,14 @@ dependencies {
 	// PostgresSQL-specific connector for JPA
 	implementation('org.postgresql:postgresql:9.4-1206-jdbc42')
 
+	// PostgresSQL-specific connector for JPA
+	implementation('mysql:mysql-connector-java:8.0.22')
+
     // datasource-proxy
     implementation('net.ttddyy:datasource-proxy:1.7')
 
     // okera-datasource-proxy
-    implementation('com.okera:okera-spring-data:1.2.2')
+    implementation('com.okera:okera-spring-data:1.2.3')
 
 	// Lombok autogenerates things like getters and setters
 	compileOnly('org.projectlombok:lombok')
