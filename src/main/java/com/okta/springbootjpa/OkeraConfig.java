@@ -20,6 +20,9 @@ public class OkeraConfig {
   private String systemUser;
   private String systemToken;
 
+  // SQL dialect to target.
+  private String dialect;
+
   public void setPlannerPort(int port) { this.plannerPort = port; }
   public int getPlannerPort() { return plannerPort; }
   public void setPlannerHost(String host) { this.plannerHost = host; }
@@ -30,5 +33,7 @@ public class OkeraConfig {
   public String getSystemUser() { return systemUser; }
   public void setSystemToken(String token) { this.systemToken = token; }
   public String getSystemToken() { return systemToken; }
+  public void setDialect(String dialect) { this.dialect = dialect; }
+  public String getDialect() { return dialect; }
 
 }

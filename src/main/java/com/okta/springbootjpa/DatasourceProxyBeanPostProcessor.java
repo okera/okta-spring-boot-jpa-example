@@ -140,6 +140,7 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
     transformer.setSystemUser(configs.getSystemUser());
     transformer.setToken(configs.getSystemToken());
     transformer.setDefaultDb(configs.getDefaultDb());
+    transformer.setDialect(configs.getDialect());
 
     transformer.setUserProvider(() -> {
       // User to run the request as. This is the user logged into the application.

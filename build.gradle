@@ -58,7 +58,7 @@ dependencies {
     implementation('net.ttddyy:datasource-proxy:1.7')
 
     // okera-datasource-proxy
-    implementation('com.okera:okera-spring-data:1.2.3')
+    implementation('com.okera:okera-spring-data:1.2.3.1')
 
 	// Lombok autogenerates things like getters and setters
 	compileOnly('org.projectlombok:lombok')
